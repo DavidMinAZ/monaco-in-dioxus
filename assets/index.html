@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monaco Editor with Dioxus Desktop</title>
+    <script src="assets/min/vs/loader.js"></script>
+    <script>
+        console.log('Script loaded, typeof require:', typeof require);
+    </script>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+        }
+        
+        #monaco-editor-container {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .monaco-editor, .monaco-editor-background, .monaco-editor .margin {
+            background-color: #1e1e1e !important;
+        }
+    </style>
+</head>
+<body>
+    <div id="main"></div>
+</body>
+</html>
