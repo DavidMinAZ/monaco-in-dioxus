@@ -4,9 +4,18 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Monaco Editor with Dioxus Desktop</title>
-    <script src="assets/min/vs/loader.js"></script>
+    <script src="min/vs/loader.js"></script>
     <script>
+        console.log('🎯 CUSTOM INDEX.HTML LOADED!'); // This will confirm it's working
         console.log('Script loaded, typeof require:', typeof require);
+        
+        // Pre-configure require for local files
+        if (typeof require !== 'undefined') {
+            require.config({
+                paths: { 'vs': 'min/vs' }
+            });
+            console.log('✅ Require configured for local Monaco files');
+        }
     </script>
     <style>
         body {
