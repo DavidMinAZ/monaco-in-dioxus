@@ -6,6 +6,7 @@ use muda::{
 };
 use std::process::exit;
 
+
 mod content;
 mod components;
 
@@ -33,6 +34,31 @@ fn App() -> Element {
 }
 
 fn main() {
+    
+
+    // Start Monaco asset server
+    std::thread::spawn(|| {
+    
+    std::env::set_var("RUST_LOG", "warp=warn"); //tame warp logging noise
+
+    let rt = tokio::runtime::Runtime::new().unwrap();
+    rt.block_on(async {
+        // Serve directly from ./assets/min without the "monaco" prefix
+        let monaco = warp::fs::dir("./assets");
+            //.with(warp::log("monaco-server")); // Optional logging
+        
+        println!("Starting Monaco server on http://localhost:3030");
+        println!("Serving files from: ./assets/min");
+        
+        warp::serve(monaco)
+            .run(([127, 0, 0, 1], 3030))
+            .await;
+        });
+    });
+
+    // Give server time to start
+    std::thread::sleep(std::time::Duration::from_millis(100));
+
     // 1. Define the custom menu using muda structs.
     let new_menu_item = MenuItem::with_id(
         NEW_MENU_ITEM_ID,
@@ -71,13 +97,49 @@ fn main() {
     let main_menu = Menu::with_items(&main_menu_items).expect("Failed to create main menu");
     
     // Pass the menu to the desktop configuration.
+    // In your main() function, update the desktop_config:
     let desktop_config = Config::new()
         .with_window(
             WindowBuilder::new()
-                .with_title("Monaco in Dioxus Sample")
-                .with_inner_size(LogicalSize::new(800.0, 600.0)),
+            .with_title("Monaco in Dioxus Sample")
+            .with_inner_size(LogicalSize::new(800.0, 800.0))
+            .with_min_inner_size(LogicalSize::new(600.0, 700.0))  // Minimum size
         )
-        .with_menu(Some(main_menu));
+        .with_menu(Some(main_menu))
+        .with_custom_head(format!(r#"
+            <link rel="stylesheet" href="http://localhost:3030/main.css" onload="console.log('CSS loaded successfully')" onerror="console.log('CSS failed to load')">
+            <style>
+                body {{
+                    margin: 0;
+                    padding: 20px;
+                    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+                    background-color: #2d2d2d;
+                    color: white;
+                }}
+                
+                #monaco-editor-container {{
+                    position: relative;
+                    overflow: hidden;
+                    border: 1px solid #444;
+                }}
+                
+                .monaco-editor, .monaco-editor-background, .monaco-editor .margin {{
+                    background-color: #1e1e1e !important;
+                }}
+            </style>
+            <script>
+                const script = document.createElement('script');
+                script.src = 'http://localhost:3030/min/vs/loader.js';
+                script.onload = function() {{
+                    require.config({{ paths: {{ 'vs': 'http://localhost:3030/min/vs' }} }});
+                    require(['vs/editor/editor.main'], function() {{
+                        console.log('Local Monaco loaded!');
+                        window.monaco_preloaded = true;
+                    }});
+                }};
+                document.head.appendChild(script);
+            </script>
+        "#));
 
     // Use the `desktop()` builder and `launch(App)`.
     dioxus::LaunchBuilder::desktop()
