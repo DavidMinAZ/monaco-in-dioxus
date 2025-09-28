@@ -48,7 +48,7 @@ fn main() {
             //.with(warp::log("monaco-server")); // Optional logging
         
         println!("Starting Monaco server on http://localhost:3030");
-        println!("Serving files from: ./assets/min");
+        println!("Serving files from: ./assets");
         
         warp::serve(monaco)
             .run(([127, 0, 0, 1], 3030))
