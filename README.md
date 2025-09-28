@@ -29,4 +29,6 @@ dx serve --platform desktop
 ```
 
 ### NOTE
-Compiling for Ubuntu I had no issues with the CSS loading properly once I started serving it via Warp, as well. However, I am still in the process of troubleshooting the build on Windows which seems to diregard a lot of the styling of the outer application UI.
+Compiling for Ubuntu I had no issues with the CSS loading properly once I started serving it via Warp, as well. (Prior to that, serving via Dioux dev server looked fine but broke on release build.)
+
+However, I am still in the process of troubleshooting the build on Windows which seems to diregard a lot of the styling of the outer application UI. 
