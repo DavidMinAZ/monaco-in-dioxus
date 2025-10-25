@@ -1,34 +1,44 @@
-# Purpose
+# Monaco Editor in Dioxus - Proof of Concept
 
-This project is intended as a brief proof-of-concept(?) to demonstrate the use of the Monaco editor within a Rust project using a Dioxus UI. This was _not_ intended to demonstrate creation of a full-blow code editor, but rather is being done to facilitate a familiar experience for users to enter and store code within an application which uses user-generated snippets in its operations.
+## Purpose
+This project demonstrates integrating Monaco Editor into a Dioxus desktop application. **This is not put together to meet a standalone code editor use-case** - rather, it shows how to embed Monaco for user code input within a larger application (e.g., for storing/managing code snippets).
 
-# Development
+## Why This Exists
+While Monaco integration examples exist for other frameworks, I couldn't find a clear solution for Dioxus 0.6. This repo provides a working starting point for anyone looking to embed Monaco in their Dioxus app.
 
-There were ample examples around the web for implenenting Monaco in various ways, but I did not immediately surface any solutions for using it in Dioxus the way I had envisioned.
+## Key Features
+- ✅ Monaco Editor loaded from local assets (no CDN dependency)
+- ✅ Bidirectional communication between Rust and Monaco
+- ✅ Custom application menu using `muda`*
+- ✅ Asset serving via Warp (required due to Dioxus asset system limitations)
 
-Reading the docs for both Dioxus and Monaco was an option, of course, and may have (in hindsight) been the better option. Instead, I leveraged multiple AI models to cobble together a basic working project as a working example of these things working together. 
+* _this did fall outside my central purpose here, but as my intended initial target for my use-case was desktop, I've left this in place_
 
-Although this approach was rife with challenges due to many of the models (GPT-4/5, Claude Sonnet 3.7, Gemini, and maybe others -- I've lost track!) struggling with Dioxus 0.6, I was able to coax them into helping get Monaco to load from a local copy (finally!), which unfortunately required using Warp. (I had the notion this could be done _without_ having to self-serve, but apparently the Dioxus asset system is not friendly to the cause.) This seems to be allowing manually-triggered exchange of content from the editor component to Rust -- and back -- so it's a "win".
+## Development Notes
 
-To that end, I offer this repo as my contribution of a starting point to anyone else embarking on such an endeavor.
+### The Journey
+This was built by iterating with multiple AI assistants (Claude, GPT-4/5, Gemini) to work around a mix of Dioxus 0.6 documentation gaps, gaps in the consulted models about different Dioxus versions, and my own challenges in reading/understanding the docs.
 
+Eventually, the main challenge was getting Monaco to load locally without CDN dependencies, which ultimately required a local Warp server to serve assets.
 
-### Starting the dev/demo server
-
-The project, as-is, was intended to address a __desktop__ target with potential future use with other targets.
-
-Run the following command in the root of your project to start developing with the default platform:
-
+### Running the App
 ```bash
+# Desktop (default)
 dx serve
-```
 
-To run for a different platform, use the `--platform platform` flag. E.g.
-```bash
+# Specify platform explicitly
 dx serve --platform desktop
 ```
 
-### NOTE
-Compiling for Ubuntu I had no issues with the CSS loading properly once I started serving it via Warp, as well. (Prior to that, serving via Dioux dev server looked fine but broke on release build.)
+## Known Issues
+- **Ubuntu**: Works as expected
+- **Windows**: Currently experiencing styling issues in the outer application UI (under investigation)
 
-However, I am still in the process of troubleshooting the build on Windows which seems to diregard a lot of the styling of the outer application UI. 
+## Technical Stack
+- Dioxus 0.6 (Desktop)
+- Monaco Editor (local assets)
+- Warp (for serving Monaco files)
+- muda (custom menus)
+
+## Contributing
+This is a minimal proof-of-concept. Feel free to use it as a foundation for your own projects!
