@@ -5,6 +5,7 @@ use muda::{
     Menu, MenuEvent, MenuItem, Submenu,
 };
 use std::process::exit;
+use tracing_subscriber::EnvFilter;
 
 
 mod content;
@@ -25,21 +26,28 @@ fn App() -> Element {
     
     rsx! {
         document::Link { rel: "icon", href: FAVICON }
-        document::Link { rel: "stylesheet", href: MAIN_CSS }
+        //document::Link { rel: "stylesheet", href: MAIN_CSS }
         h1 { "Monaco Editor in Dioxus" }
-        h2 { "with a custom menu using muda" }
-        h3 { "(check devtools console and terminal when clicking buttons)" }
+        h2 { class: "smaller", "with a custom menu using muda" }
+        h3 { class: "even-smaller", "(check devtools console and terminal when clicking buttons)" }
         crate::content::Hero {}
     }
 }
 
 fn main() {
-    
+
+    // Initialize tracing subscriber FIRST to tame warp/hyper logging noise
+    tracing_subscriber::fmt()
+        .with_env_filter(
+            EnvFilter::new("error")
+                .add_directive("hyper=error".parse().unwrap())
+                .add_directive("warp=error".parse().unwrap())
+        )
+        .init();
 
     // Start Monaco asset server
     std::thread::spawn(|| {
     
-    std::env::set_var("RUST_LOG", "warp=warn"); //tame warp logging noise
 
     let rt = tokio::runtime::Runtime::new().unwrap();
     rt.block_on(async {
@@ -57,9 +65,11 @@ fn main() {
     });
 
     // Give server time to start
-    std::thread::sleep(std::time::Duration::from_millis(100));
+    // Keeping as comment for now; was more necessary when still allowing load via Monaco CDN
+    //std::thread::sleep(std::time::Duration::from_millis(100));
 
-    // 1. Define the custom menu using muda structs.
+    // Define the custom menu using muda structs.
+    // This should really be factored out someplace else, but people love menus!
     let new_menu_item = MenuItem::with_id(
         NEW_MENU_ITEM_ID,
         "New",
@@ -75,13 +85,13 @@ fn main() {
     );
     let other_menu_item_1 = MenuItem::with_id(
         OTHER_MENU_ITEM_ID_1,
-        "Scary Option 1",
+        "Exciting Option",
         true,
         Some(Accelerator::new(Some(Modifiers::CONTROL), Code::Digit1)),
     );
     let other_menu_item_2 = MenuItem::with_id(
         OTHER_MENU_ITEM_ID_2,
-        "Scary Option 2",
+        "About",
         true,
         Some(Accelerator::new(Some(Modifiers::CONTROL), Code::Digit2)),
     );
