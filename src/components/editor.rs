@@ -108,7 +108,7 @@ pub fn MonacoEditor(initial_value: String) -> Element {
 
                     spawn(async move {
                         let init_js = format!(r#"
-                            console.log('Initializing Monaco Editor...');
+                            console.log('Initializing Monaco Editor from local server...');
 
                             (function initMonaco() {{
                                 function createEditor() {{
@@ -135,7 +135,7 @@ pub fn MonacoEditor(initial_value: String) -> Element {
                                             lineNumbersMinChars: 0
                                         }});
 
-                                        console.log('Monaco Editor created successfully!');
+                                        console.log('Monaco Editor created successfully from localhost:3030!');
                                         window.monaco_ready = true;
                                         
                                         // Set up change listener
@@ -154,30 +154,38 @@ pub fn MonacoEditor(initial_value: String) -> Element {
                                     }}
                                 }}
 
+                                // Check if Monaco was preloaded in main.rs
+                                if (window.monaco_preloaded && typeof monaco !== 'undefined' && monaco.editor) {{
+                                    console.log('Monaco was preloaded in head, using it directly');
+                                    createEditor();
+                                    return;
+                                }}
+
                                 if (typeof monaco !== 'undefined' && monaco.editor) {{
                                     console.log('Monaco already loaded');
                                     createEditor();
                                     return;
                                 }}
 
-                                // Load Monaco from CDN
-                                console.log('Loading Monaco from CDN...');
-                                const cdnScript = document.createElement('script');
-                                cdnScript.src = 'https://cdn.jsdelivr.net/npm/monaco-editor@0.44.0/min/vs/loader.js';
-                                cdnScript.onload = function() {{
-                                    console.log('Monaco loader loaded');
+                                // Load Monaco from local Warp server
+                                console.log('Loading Monaco from localhost:3030...');
+                                const loaderScript = document.createElement('script');
+                                loaderScript.src = 'http://localhost:3030/min/vs/loader.js';
+                                loaderScript.onload = function() {{
+                                    console.log('Monaco loader loaded from local server');
                                     require.config({{
-                                        paths: {{ 'vs': 'https://cdn.jsdelivr.net/npm/monaco-editor@0.44.0/min/vs' }}
+                                        paths: {{ 'vs': 'http://localhost:3030/min/vs' }}
                                     }});
                                     require(['vs/editor/editor.main'], function() {{
-                                        console.log('Monaco main loaded');
+                                        console.log('Monaco main loaded from local server');
                                         createEditor();
                                     }});
                                 }};
-                                cdnScript.onerror = function() {{
-                                    console.error('Failed to load Monaco from CDN');
+                                loaderScript.onerror = function() {{
+                                    console.error('Failed to load Monaco from localhost:3030');
+                                    console.error('Make sure the Warp server is running and serving from ./assets');
                                 }};
-                                document.head.appendChild(cdnScript);
+                                document.head.appendChild(loaderScript);
                             }})();
                         "#);
 
@@ -273,7 +281,7 @@ pub fn MonacoEditor(initial_value: String) -> Element {
                 } else {
                     div {
                         style: "color: #888; font-style: italic;",
-                        "Monaco Editor loading..."
+                        "Monaco Editor loading from localhost:3030..."
                     }
                 }
             }
@@ -288,6 +296,10 @@ pub fn MonacoEditor(initial_value: String) -> Element {
                 p { 
                     style: "margin: 5px 0 0 0; color: #888;",
                     "🔧 Use 'Print Stored Content' to see what's in the Rust signal"
+                }
+                p { 
+                    style: "margin: 5px 0 0 0; color: #4a9eff;",
+                    "🚀 Loading from local Warp server at localhost:3030"
                 }
             }
         }
