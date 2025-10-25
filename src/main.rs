@@ -47,22 +47,26 @@ fn main() {
 
     // Start Monaco asset server
     std::thread::spawn(|| {
-    
-
     let rt = tokio::runtime::Runtime::new().unwrap();
     rt.block_on(async {
-        // Serve directly from ./assets/min without the "monaco" prefix
-        let monaco = warp::fs::dir("./assets");
-            //.with(warp::log("monaco-server")); // Optional logging
+        // Get the executable's directory
+        let exe_dir = std::env::current_exe()
+            .ok()
+            .and_then(|p| p.parent().map(|p| p.to_path_buf()))
+            .unwrap_or_else(|| std::path::PathBuf::from("."));
+        
+        let assets_path = exe_dir.join("assets");
         
         println!("Starting Monaco server on http://localhost:3030");
-        println!("Serving files from: ./assets");
+        println!("Serving files from: {:?}", assets_path);
+        
+        let monaco = warp::fs::dir(assets_path);
         
         warp::serve(monaco)
             .run(([127, 0, 0, 1], 3030))
             .await;
-        });
     });
+});
 
     // Give server time to start
     // Keeping as comment for now; was more necessary when still allowing load via Monaco CDN
