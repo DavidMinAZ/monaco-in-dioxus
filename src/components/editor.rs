@@ -170,11 +170,11 @@ pub fn MonacoEditor(initial_value: String) -> Element {
                                 // Load Monaco from local Warp server
                                 console.log('Loading Monaco from localhost:3030...');
                                 const loaderScript = document.createElement('script');
-                                loaderScript.src = 'http://localhost:3030/min/vs/loader.js';
+                                loaderScript.src = 'http://localhost:3030/monaco/min/vs/loader.js';
                                 loaderScript.onload = function() {{
                                     console.log('Monaco loader loaded from local server');
                                     require.config({{
-                                        paths: {{ 'vs': 'http://localhost:3030/min/vs' }}
+                                        paths: {{ 'vs': 'http://localhost:3030/monaco/min/vs' }}
                                     }});
                                     require(['vs/editor/editor.main'], function() {{
                                         console.log('Monaco main loaded from local server');
@@ -183,7 +183,7 @@ pub fn MonacoEditor(initial_value: String) -> Element {
                                 }};
                                 loaderScript.onerror = function() {{
                                     console.error('Failed to load Monaco from localhost:3030');
-                                    console.error('Make sure the Warp server is running and serving from ./assets');
+                                    console.error('Make sure the Warp server is running and serving from ./monaco');
                                 }};
                                 document.head.appendChild(loaderScript);
                             }})();
