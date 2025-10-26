@@ -21,6 +21,26 @@ This was built by iterating with multiple AI assistants (Claude, GPT-4/5, Gemini
 
 Eventually, the main challenge was getting Monaco to load locally without CDN dependencies, which ultimately required a local Warp server to serve assets.
 
+## Prerequisites
+
+### Linux
+```bash
+# Ubuntu/Debian
+sudo apt-get install libjavascriptcoregtk-4.1-dev libwebkit2gtk-4.1-dev libgtk-3-dev
+
+# Fedora
+sudo dnf install webkit2gtk4.1-devel gtk3-devel
+
+# Arch
+sudo pacman -S webkit2gtk gtk3
+```
+
+### Windows
+Requires MSVC toolchain. Install [Visual Studio Build Tools](https://visualstudio.microsoft.com/downloads/#build-tools-for-visual-studio-2022).
+
+### macOS
+Should work out of the box with Xcode Command Line Tools installed.
+
 ### Running the App
 ```bash
 # Desktop (default)
