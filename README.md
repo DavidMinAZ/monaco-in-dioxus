@@ -22,6 +22,7 @@ This was built by iterating with multiple AI assistants (Claude, GPT-4/5, Gemini
 Eventually, the main challenge was getting Monaco to load locally without CDN dependencies, which ultimately required a local Warp server to serve assets.
 
 ## Prerequisites
+Since there is a JavaScript dependency, additional packages are required to be installed if not already pantry staples on your system.
 
 ### Linux
 ```bash
