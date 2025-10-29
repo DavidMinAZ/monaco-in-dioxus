@@ -14,6 +14,9 @@ While Monaco integration examples exist for other frameworks, I couldn't find a 
 
 * _this did fall outside my central purpose here, but as my intended initial target for my use-case was desktop, I've left this in place_
 
+## Screenshot
+![](screenshots/monaco-in-dioxus_screenshot.png)
+
 ## Development Notes
 
 ### The Journey
